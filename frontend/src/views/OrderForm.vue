@@ -5,9 +5,13 @@ import {useRouter} from "vue-router";
 import {getItems} from "@/services/cartService";
 
 // 라우터 객체
+const router = useRouter();
 
 
 // 반응형 상태
+const state = reactive({
+  items: []
+});
 
 
 // 최종 결제 금액
@@ -42,7 +46,11 @@ const submit = async () => {
 };
 
 // 커스텀 생성 훅
-
+(async function onCreated() {
+  const res = await getItems();
+  if(res.status === 200)
+  state.items = res.data;
+})();
 </script>
 
 <template>
@@ -60,12 +68,12 @@ const submit = async () => {
             <span class="h5 mb-3 align-middle me-2">
               <b>구입 목록</b>
             </span>
-            <span class="badge bg-primary rounded-pill align-middle"></span>
+            <span class="badge bg-primary rounded-pill align-middle" ></span>
           </div>
           <ul class="items list-group mb-3">
             <li class="p-3 list-group-item d-flex justify-content-between">
               <div>
-                <h6 class="my-0"></h6>
+                <h6 class="my-0" v-for="item in state.items" :key="item.id">{{ item.name }}</h6>
               </div>
               <span class="text-muted">
 

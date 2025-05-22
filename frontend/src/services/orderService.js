@@ -1,3 +1,8 @@
+import axios from "axios";
+
+export const addOrder = (orderData) => {
+    return axios.post("/v1/api/orders", orderData);
+};
 
 
 // 주문 삽입
