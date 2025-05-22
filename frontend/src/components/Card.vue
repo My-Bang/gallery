@@ -3,7 +3,6 @@
 
 
 
-
 // 상품 할인가
 // 라우터 객체
 // 계정 스토어
@@ -18,11 +17,8 @@
       <p class="card-text">
 
 
-
-
         <!-- 상품 이름 -->
         <!-- 상품 할인율 -->
-
       </p>
       <div class="d-flex justify-content-between align-items-center">
 
