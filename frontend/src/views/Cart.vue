@@ -1,57 +1,55 @@
 <script setup>
-import {reactive, onMounted, watch} from "vue";
-import {getItems, removeItem} from "@/services/cartService.js";
-import router from "@/router/index.js";
 
-// 상태
+import {getItems, removeItem} from "@/services/cartService"
+import {reactive} from "vue";
+
+// 반응형 상태
 const state = reactive({
   items: []
 });
 
-// 주문하기
-const order = async () => {
-
-  await router.push("/orders");
-};
-
-
-// 생성 훅
-(async function onCreated() {
+// 장바구니 상품 조회
+const load = async ()=>{
   const res = await getItems();
+
   if (res.status === 200) {
-    console.log(res.data);
     state.items = res.data;
   }
-})();
+}
 
-
+// 장바구니 상품 삭제
 const remove = async (itemId) => {
-  await removeItem(itemId);
-  const res = await getItems();
-  if(res.status === 200)
-    console.log(res.data);
-  state.items = res.data;
-};
+  const res = await removeItem(itemId);
 
+  if (res.status === 200) {
+    window.alert("선택하신 장바구니의 상품을 삭제했습니다.");
+    await load();
+  }
+}
+
+// 커스텀 생성 훅
+(async function onCreated() {
+  await load();
+})();
 
 </script>
 
 <template>
   <div class="cart">
     <div class="container">
-      <template v-if="state.items.length > 0">
+      <template v-if="state.items.length">
         <ul class="items">
-          <li v-for="item in state.items" :key="item.id">
-            <img :src="item.imgPath" />
-            <b class="name">{{ item.name }}</b>
+          <li v-for="i in state.items">
+            <img :alt="`상품 사진(${i.name})`" :src="i.imgPath"/>
+            <b class="name">{{ i.name }}</b>
             <span class="price">
-          {{ (item.price - (item.price * item.discountPer / 100)).toLocaleString() }}원
+            {{ (i.price - i.price * i.discountPer / 100).toLocaleString() }}원
           </span>
-            <span class="remove float-end" title="삭제" @click="remove(item.id)">&times;</span>
+            <span class="remove float-end" @click="remove(i.id)" title="삭제">&times;</span>
           </li>
         </ul>
         <div class="act">
-          <button class="btn btn-primary" @click="order()">주문하기</button>
+          <router-link to="/order" class="btn btn-primary">주문하기</router-link>
         </div>
       </template>
       <div class="text-center py-5" v-else>장바구니가 비어있습니다.</div>
@@ -101,6 +99,3 @@ const remove = async (itemId) => {
   }
 }
 </style>
-
-
-
